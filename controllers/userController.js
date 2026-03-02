@@ -56,7 +56,8 @@ const createUser = async (req, res) => {
 
             const newUser = new User(
                 {
-                    ...req.body,
+                    username,
+                    gmail,
                     password: hashedPassword,
                     otp,
                     otpInvalid,
@@ -84,7 +85,9 @@ const createUser = async (req, res) => {
                 console.log("Email error:", error.message)
             }
 
-            res.status(200).json(newUser)           
+            res.status(200).json({
+                message: "User registered successfully. Check your email for OTP."
+            })           
         }
         
     } catch (error) {
