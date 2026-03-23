@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
 // logging in
-const Signin = async (req, res) => {
+const signin = async (req, res) => {
     try {
 
         const { gmail, password } = req.body
@@ -130,7 +130,7 @@ const resetPassword = async (req, res) => {
 }
 
 module.exports = {
-    Signin,
+    signin,
     resetRequest,
     resetPassword,
     validationPasswordOTP
