@@ -5,7 +5,7 @@ const authRouter = express.Router()
 
 //create a product
 authRouter
-    .post('/user/Signin', Signin)
+    .post('/Signin', Signin)
     .post('/password/resetRequest', resetRequest)
     .post('/password/validate', validationPasswordOTP)
     .post('/password/reset', resetPassword)

@@ -9,16 +9,16 @@ userRouter
     .post('/register', createUser)
 
 // get all users
-    .get('/allUsers', getAllUsers)
+    .get('/users', getAllUsers)
 
 // get a user
-    .get('/user/:id', getUserById)
+    .get('/users/:id', getUserById)
 
 // update a user
-    .put('/user/:id', authMiddleware, updateUser)
+    .put('/users/:id', authMiddleware, updateUser)
 
 // delete a user
-    .delete('/user/:id', authMiddleware, deleteUser)
+    .delete('/users/:id', authMiddleware, deleteUser)
 
 
 module.exports = userRouter
