@@ -9,10 +9,10 @@ userRouter
     .post('/register', createUser)
 
 // get all users
-    .get('/users', getAllUsers)
+    .get('/users', authMiddleware, getAllUsers)
 
 // get a user
-    .get('/users/:id', getUserById)
+    .get('/users/:id', authMiddleware, getUserById)
 
 // update a user
     .put('/users/:id', authMiddleware, updateUser)
