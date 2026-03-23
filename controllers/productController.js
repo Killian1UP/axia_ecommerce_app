@@ -2,6 +2,29 @@ const Category = require("../schema/categorySchema")
 const Product = require("../schema/productSchema")
 
 
+// create a product
+const createProduct = async (req, res) => {
+    const { name, price, color, size, imgUrl, category } = req.body
+    const user = req.user
+    
+    try {
+        if (!name || !price || !color || !category) {
+            res.status(400).json({ message: "All fields are required!" })
+        }
+        const foundCategory = await Category.findOne({name: category})
+
+        if (!foundCategory) {
+            return res.status(400).json({message: `Inform admin to add the category ${category}`})
+        }
+
+        const newProduct = new Product({...req.body, userId: user._id, category: foundCategory._id})
+        await newProduct.save()
+        res.status(200).json({message: "New product created successfully."})
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
 const getAllProducts = async (req, res) => {
     try {
         const { name, color, size, category } = req.query
@@ -58,29 +81,6 @@ const getProductById = async (req, res) => {
     
     } catch (error) {
         res.status(500).json({message: error.message})
-    }
-}
-
-// create a product
-const createProduct = async (req, res) => {
-    const { name, price, color, size, imgUrl, category } = req.body
-    const user = req.user
-    
-    try {
-        if (!name || !price || !color || !category) {
-            res.status(400).json({ message: "All fields are required!" })
-        }
-        const foundCategory = await Category.findOne({name: category})
-
-        if (!foundCategory) {
-            return res.status(400).json({message: `Inform admin to add the category ${category}`})
-        }
-
-        const newProduct = new Product({...req.body, userId: user._id, category: foundCategory._id})
-        await newProduct.save()
-        res.status(200).json({message: "New product created successfully."})
-    } catch (error) {
-        res.status(500).json(error)
     }
 }
 

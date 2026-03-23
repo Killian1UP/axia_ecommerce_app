@@ -67,9 +67,9 @@ const resetRequest = async (req, res) => {
         // sending a password reset otp to the email address
         try {
             const mailObj = {
-                mailFrom: `Kits Global ${process.env.KITS_EMAIL}`,
+                mailFrom: `EasyBuy Global ${process.env.KITS_EMAIL}`,
                 mailTo: gmail,
-                subject: 'Kits Password Reset',
+                subject: 'EasyBuy Password Reset',
                 body: `
                     <h1>You have requested for change of password, <strong>${username}</strong> 🙌</h1>
                     <p> Here is your ${passwordResetToken}, proceed to change <p>

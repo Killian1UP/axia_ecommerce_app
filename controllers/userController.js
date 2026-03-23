@@ -2,37 +2,6 @@ const { generateToken, sendMail } = require("../lib/sendMail")
 const User = require("../schema/userSchema")
 const bcrypt = require("bcrypt")
 
-// get all users
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find()
-        if (users.length === 0) {
-            return res.status(200).json({
-                message: "No user(s) was found, you must register or sign-in as a user."
-            })
-        }
-        res.status(200).json(users)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
-// get a user by id
-const getUserById = async (req, res) => {
-    try {
-        const { id } = req.params
-        const user = await User.findById(id)
-        if (!user) {
-            return res.status(400).json({
-                message: `User with the id ${id} is not found`
-            })
-        }
-        res.status(200).json(user)
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-}
-
 // create a user
 const createUser = async (req, res) => {
     try {
@@ -68,11 +37,11 @@ const createUser = async (req, res) => {
 
             try {
                 const mailObj = {
-                    mailFrom: `Kits Global ${process.env.KITS_EMAIL}`,
+                    mailFrom: `EasyBuy Global ${process.env.KITS_EMAIL}`,
                     mailTo: gmail,
-                    subject: 'Kits OTP Verification',
+                    subject: 'EasyBuy OTP Verification',
                     body: `
-                        <h1>Welcome to Kits Global, <strong>${username}</strong> 🙌</h1>
+                        <h1>Welcome to EasyBuy Global, <strong>${username}</strong> 🙌</h1>
                         <p> Here is your OTP ${otp}, proceed to verify <p>
                         <p> Please do not reply to this email, as it is coming from the app <p>
                     `
@@ -94,6 +63,37 @@ const createUser = async (req, res) => {
         res.status(500).json(({
             message: error.message
         }))
+    }
+}
+
+// get all users
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+        if (users.length === 0) {
+            return res.status(200).json({
+                message: "No user(s) was found, you must register or sign-in as a user."
+            })
+        }
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+}
+
+// get a user by id
+const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(400).json({
+                message: `User with the id ${id} is not found`
+            })
+        }
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({message: error.message})
     }
 }
 

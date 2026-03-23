@@ -28,11 +28,11 @@ const otpVerify = async (req, res) => {
 
         try {
             const mailObj = {
-                mailFrom: `Kits Global ${process.env.KITS_EMAIL}`,
+                mailFrom: `EasyBuy Global ${process.env.KITS_EMAIL}`,
                 mailTo: gmail,
-                subject: 'Kits OTP Verification',
+                subject: 'EasyBuy OTP Verification',
                 body: `
-                    <h1>Welcome to Kits Global, <strong>${username}</strong> 🙌</h1>
+                    <h1>Welcome to EasyBuy Global, <strong>${username}</strong> 🙌</h1>
                     <p> Here is your resents OTP ${otp}, proceed to verify <p>
                     <p> Please do not reply to this email, as it is coming from the app <p>
                 `
@@ -78,9 +78,9 @@ const otpResend = async (req, res) => {
 
        try {
             const mailObj = {
-                mailFrom: `Kits Global ${process.env.KITS_EMAIL}`,
+                mailFrom: `EasyBuy Global ${process.env.KITS_EMAIL}`,
                 mailTo: gmail,
-                subject: 'Kits OTP Resend',
+                subject: 'EasyBuy OTP Resend',
                 body: `
                     <p> This is the OTP resend ${otp} <p>
                 `
