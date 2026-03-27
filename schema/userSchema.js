@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     profile: {
         bio: String,
         country: String,
-        street: String
+        street: String,
+        city: String
     },
     otp: String,
     otpInvalid: Date,
