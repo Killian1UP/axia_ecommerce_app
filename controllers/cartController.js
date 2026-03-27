@@ -170,9 +170,11 @@ const editCartItem = async (req, res) => {
             return res.status(400).json({message: "Product not found in cart"})
         }
         
-        if (type === 'increase') {
+        const typeNormalized = type.toLowerCase();
+
+        if (typeNormalized === 'increase') {
             itemInCart.quantity += 1
-        } else if (type === 'decrease') {
+        } else if (typeNormalized === 'decrease') {
             if (itemInCart.quantity > 1) {
                 itemInCart.quantity -= 1
             } else {

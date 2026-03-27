@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 // create a user
 const createUser = async (req, res) => {
     try {
-        const { username, gmail, password } = req.body
+        const { username, gmail, password, profile } = req.body
 
         if (!username || !gmail || !password) {
             return res.status(400).json({
@@ -30,7 +30,8 @@ const createUser = async (req, res) => {
                     password: hashedPassword,
                     otp,
                     otpInvalid,
-                    lastOtpSent: time
+                    lastOtpSent: time,
+                    profile
                 }
             )
             await newUser.save()

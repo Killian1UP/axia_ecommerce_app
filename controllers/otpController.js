@@ -1,3 +1,4 @@
+const { generateToken, sendMail } = require("../lib/sendMail")
 const User = require("../schema/userSchema")
 
 
@@ -49,6 +50,7 @@ const otpVerify = async (req, res) => {
 
     } catch (error) {
         console.log(error)
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 
@@ -92,10 +94,11 @@ const otpResend = async (req, res) => {
         } catch (error) {
             console.log("Email error:", error.message)
         }
-        res.status(200).json({message: "Please check your email"})
+        res.status(200).json({message: "Please check your email for the OTP"})
 
     } catch (error) {
         console.log(error)
+        res.status(500).json({ message: "Internal server error" })
     }
 }
 

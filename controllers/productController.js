@@ -31,7 +31,8 @@ const getAllProducts = async (req, res) => {
 
         const filter = {}
 
-        filter.userId = req.user._id
+        // Only add userId filter if req.user exists
+        if (req.user) filter.userId = req.user._id
 
         if (name) filter.name = name
         if (color) filter.color = color
@@ -64,16 +65,13 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const { id } = req.params
-        const product = await Product.findOne({
-            _id: id,
-            userId: req.user._id
-        })
+        const product = await Product.findById(id)
         .populate("category")
         .populate("userId", "-password")
         
         if (!product) {
             return res.status(404).json({
-                message: "Product not found or not authorized"
+                message: "Product not found"
             })
         }
         
@@ -115,7 +113,6 @@ const deleteProduct = async (req, res) => {
 // update a product
 const updateProduct = async (req, res) => {
     try {
-        const user = req.user
         const { id } = req.params
 
         const product = await Product.findOne({
