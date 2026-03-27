@@ -2,16 +2,21 @@
 
 ## Overview
 
-EasyBuy Global API is a backend RESTful service built with Node.js and
-Express that powers an e-commerce style platform. The API handles user
-authentication, product management, password recovery using OTP
-verification, and secure user account management.
+EasyBuy Global API is a RESTful backend service built with Node.js and
+Express.js that powers a modern e-commerce platform. The API manages
+user authentication, product and category management, shopping cart
+functionality, checkout processing, and order management.
 
-The system is designed with scalability and security in mind, using
-MongoDB for data persistence and JWT-based authentication for protected
-routes.
+The system is designed with security, scalability, and modular
+architecture in mind using:
 
-This backend can serve as the foundation for an e-commerce web or mobile
+-   MongoDB for database storage
+-   Mongoose ODM for schema modeling
+-   JWT authentication for secure routes
+-   OTP verification via email for user verification and password
+    recovery
+
+This backend can power a web, mobile, or third‑party e‑commerce client
 application.
 
 ------------------------------------------------------------------------
@@ -20,7 +25,7 @@ application.
 
 ## User Management
 
-Users can register, manage their accounts, and interact with the
+Users can create accounts, manage profiles, and interact with the
 platform securely.
 
 ### Register User
@@ -28,54 +33,59 @@ platform securely.
 Endpoint: POST /register
 
 Functionality: - Creates a new user account - Hashes the password using
-bcrypt before storing it - Generates an OTP for email verification -
-Sends OTP to the user's email address
+bcrypt - Generates a One Time Password (OTP) for email verification -
+Sends OTP to the user's email
 
-Fields required: - username - gmail - password
+Required Fields: - username - gmail - password
 
-Default values applied: - admin: false - verified: false
+Default values: - admin: false - verified: false
+
+------------------------------------------------------------------------
 
 ### Get All Users
 
-Endpoint: GET /users
+Endpoint: GET /users\
+Protected Route: Admin only
 
-Returns a list of all users stored in the database.
+Returns a list of all registered users.
+
+------------------------------------------------------------------------
 
 ### Get User By ID
 
-Endpoint: GET /users/:id
+Endpoint: GET /users/:id\
+Protected Route: Authenticated users
 
-Returns detailed information for a specific user.
+Returns details for a specific user.
+
+------------------------------------------------------------------------
 
 ### Update User
 
-Endpoint: PUT /users/:id
+Endpoint: PUT /users/:id\
+Protected Route: Authenticated users
 
-Protected Route: Requires authentication via JWT.
+Allows users to update profile information.
 
-Allows a user to update their account details.
+------------------------------------------------------------------------
 
 ### Delete User
 
-Endpoint: DELETE /users/:id
+Endpoint: DELETE /users/:id\
+Protected Route: Admin only
 
-Protected Route: Requires authentication.
-
-Allows a user to remove their account.
+Removes a user from the system.
 
 ------------------------------------------------------------------------
 
 # Authentication System
 
-Authentication routes manage login and password recovery processes.
-
-## Sign In
+### Sign In
 
 Endpoint: POST /signin
 
-Functionality: - Authenticates users using email and password -
-Validates password using bcrypt - Generates a JWT token for session
-authentication
+Functionality: - Validates user credentials - Compares passwords using
+bcrypt - Generates a JWT token for authentication
 
 The token is required to access protected routes.
 
@@ -83,160 +93,315 @@ The token is required to access protected routes.
 
 # Password Recovery System
 
-The application includes a secure password reset workflow using OTP
-verification.
-
-## Request Password Reset
+### Request Password Reset
 
 Endpoint: POST /password/resetRequest
 
-Functionality: - Generates a password reset OTP - Sends the OTP to the
-user's email
+-   Generates OTP
+-   Sends OTP to user email
 
-## Validate Password Reset OTP
+### Validate OTP
 
 Endpoint: POST /password/validate
 
-Functionality: - Verifies that the OTP submitted by the user is valid -
-Ensures the OTP has not expired
+-   Confirms OTP validity
+-   Ensures token has not expired
 
-## Reset Password
+### Reset Password
 
 Endpoint: POST /password/reset
 
-Functionality: - Allows the user to set a new password after OTP
-validation - Password is securely hashed before being stored
+-   Allows the user to set a new password
+-   Password is hashed before saving
+
+------------------------------------------------------------------------
+
+# Category Management
+
+### Create Category
+
+Endpoint: POST /product/category\
+Protected Route: Admin only
+
+Creates a new product category.
+
+### Get Categories
+
+Endpoint: GET /categories
+
+Returns all categories.
+
+### Update Category
+
+Endpoint: PUT /product/category/:id\
+Protected Route: Admin only
+
+Updates a category.
+
+### Delete Category
+
+Endpoint: DELETE /product/category/:id\
+Protected Route: Admin only
+
+Deletes a category.
 
 ------------------------------------------------------------------------
 
 # Product Management
 
-Product operations allow administrators to create, update, and manage
-products.
+### Create Product
 
-## Create Product
+Endpoint: POST /products\
+Protected Route: Admin only
 
-Endpoint: POST /products
+Creates a new product.
 
-Protected Route: Requires authentication.
+Typical fields:
 
-Creates a new product entry in the database.
+-   name
+-   price
+-   color
+-   size
+-   category
+-   image URL
 
-Typical product fields: - name - price - color - size (optional) -
-category - image URL
-
-## Get All Products
+### Get All Products
 
 Endpoint: GET /products
 
-Returns all available products.
+Returns products with optional filtering by:
 
-## Get Product By ID
+-   name
+-   color
+-   size
+-   category
+
+### Get Product By ID
 
 Endpoint: GET /products/:id
 
-Returns information about a specific product.
+Returns detailed information for a single product.
 
-## Update Product
+### Update Product
 
-Endpoint: PUT /products/:id
+Endpoint: PUT /products/:id\
+Protected Route: Admin only
 
-Protected Route: Requires authentication.
+Updates product details.
 
-Allows updating product information.
+### Delete Product
 
-## Delete Product
+Endpoint: DELETE /products/:id\
+Protected Route: Admin only
 
-Endpoint: DELETE /products/:id
+Removes a product from the store.
 
-Protected Route: Requires authentication.
+------------------------------------------------------------------------
 
-Removes a product from the database.
+# Shopping Cart System
+
+Each user has one active cart where products can be added before
+checkout.
+
+### Add Product to Cart
+
+Adds a product to the user's cart and calculates:
+
+-   item quantity
+-   total item price
+-   total cart price
+
+### Update Cart Item
+
+Allows users to:
+
+-   Increase product quantity
+-   Decrease product quantity
+
+The system automatically recalculates:
+
+-   totalItemPrice
+-   totalCartItemPrice
+
+### Remove Item From Cart
+
+Users can remove products from their cart.
+
+### Get Cart
+
+Returns the authenticated user's cart with:
+
+-   product details
+-   quantities
+-   total prices
+
+------------------------------------------------------------------------
+
+# Checkout System
+
+The checkout process converts the user's cart into an order.
+
+### Checkout Cart
+
+Endpoint: POST /checkout\
+Protected Route: Authenticated users
+
+Functionality:
+
+-   Retrieves the user's cart
+-   Copies cart items into a new order
+-   Calculates totalOrderPrice
+-   Saves shipping address and payment method
+-   Clears the cart after order creation
+
+Checkout Fields:
+
+-   paymentMethod
+-   shippingAddress
+    -   country
+    -   street
+    -   city
+
+------------------------------------------------------------------------
+
+# Order Management
+
+Orders track purchases made by users.
+
+### Order Status Flow
+
+pending → processing → shipped → delivered
+
+Orders can also be cancelled.
+
+### Payment Status
+
+Tracks payment progress:
+
+-   pending
+-   paid
+-   failed
+
+### Get My Orders
+
+Endpoint: GET /orders/my-orders\
+Protected Route: Authenticated users
+
+Returns all orders belonging to the logged-in user.
+
+### Get Order By ID
+
+Endpoint: GET /orders/:id\
+Protected Route: Authenticated users
+
+Returns a specific order if it belongs to the user.
+
+### Get All Orders
+
+Endpoint: GET /orders\
+Protected Route: Admin only
+
+Returns all orders in the system.
+
+### Update Order Status
+
+Endpoint: PUT /orders/:id\
+Protected Route: Admin only
+
+Admins can update:
+
+-   orderStatus
+-   paymentStatus
+
+Example:
+
+{ "orderStatus": "shipped", "paymentStatus": "paid" }
 
 ------------------------------------------------------------------------
 
 # Email Notification System
 
-The application sends automated emails for:
+The system automatically sends emails for:
 
--   OTP verification during registration
+-   User OTP verification
 -   Password reset requests
 
-This functionality ensures secure user verification and account
-recovery.
+This is implemented using Nodemailer.
 
 ------------------------------------------------------------------------
 
 # Security Features
 
-The API includes several security practices:
+### Password Hashing
 
-Password Hashing - bcrypt is used to hash passwords before storing them.
+Passwords are hashed using bcrypt before being stored.
 
-JWT Authentication - Protected routes require a valid JWT token.
+### JWT Authentication
 
-OTP Verification - Time-limited OTP tokens help secure account
-verification and password resets.
+Protected routes require a valid JSON Web Token.
 
-Environment Variables Sensitive credentials such as: - database
-connection strings - email credentials - JWT secrets
+### OTP Verification
 
-are stored securely using environment variables.
+Time-limited OTP tokens secure account verification and password
+recovery.
+
+### Environment Variables
+
+Sensitive credentials are stored securely in a .env file.
 
 ------------------------------------------------------------------------
 
 # Tech Stack
 
-Backend Framework - Node.js - Express.js
+Backend: - Node.js - Express.js
 
-Database - MongoDB - Mongoose ODM
+Database: - MongoDB - Mongoose
 
-Authentication & Security - JSON Web Tokens (JWT) - bcrypt
+Security: - JWT - bcrypt
 
-Email Service - Nodemailer
+Email: - Nodemailer
 
-Environment Configuration - dotenv
+Environment Configuration: - dotenv
 
-Deployment - Render
+Development Tools: - Nodemon - Postman
 
-Development Tools - Nodemon - Postman for API testing
+Deployment: - Render
 
 ------------------------------------------------------------------------
 
 # Project Structure
 
-controllers/ Contains business logic for: - users - authentication -
-products
+controllers/ Business logic for: - users - authentication - products -
+carts - orders - checkout
 
-middlewares/ Contains custom middleware such as: - authentication
-middleware
+middlewares/ - authentication middleware - admin middleware
 
-models/ Defines MongoDB schemas using Mongoose.
+schema/ Database models: - User - Product - Category - Cart - Order
 
-routers/ Defines API routes and connects them to controllers.
+routers/ Defines API routes.
 
 ------------------------------------------------------------------------
 
-# Installation Guide
+# Installation
 
-1.  Clone the repository
+1.  Clone repository
 
 git clone `<repository-url>`{=html}
 
-2.  Navigate into the project
+2.  Navigate into project
 
-cd project-folder
+cd easybuy-api
 
 3.  Install dependencies
 
 npm install
 
-4.  Create a .env file and configure:
+4.  Create .env file
 
 MONGO_URI=your_mongodb_connection_string JWT_SECRET=your_jwt_secret
-EMAIL_USER=your_email EMAIL_PASS=your_email_password
+KITS_EMAIL=your_email EMAIL_PASS=your_email_password
 
-5.  Start the server
+5.  Start server
 
 npm run dev
 
@@ -246,24 +411,12 @@ node server.js
 
 ------------------------------------------------------------------------
 
-# Deployment
-
-The API is deployed using Render.
-
-Steps include: - connecting the GitHub repository - setting environment
-variables - enabling automatic deployments
-
-------------------------------------------------------------------------
-
 # Future Improvements
 
-Potential improvements for the system include:
-
--   Role-based access control (admin vs user)
--   Product category management
--   Shopping cart system
--   Order processing system
--   Payment integration
+-   Payment gateway integration (Stripe / PayPal)
+-   Product image upload with Cloudinary
+-   Product reviews and ratings
+-   Inventory tracking
 -   API rate limiting
 -   Logging and monitoring
 
@@ -273,7 +426,5 @@ Potential improvements for the system include:
 
 Ikaelelo Motlhako
 
-Backend Developer focused on building secure and scalable backend
-systems using Node.js and modern web technologies.
-
-------------------------------------------------------------------------
+Backend Developer focused on building scalable backend systems using
+Node.js, Express, MongoDB, and REST APIs.
